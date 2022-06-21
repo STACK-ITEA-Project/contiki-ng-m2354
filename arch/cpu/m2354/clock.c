@@ -61,9 +61,9 @@ void clock_init(void)
 	CLK_EnableModuleClock(GPG_MODULE);
 	CLK_EnableModuleClock(GPH_MODULE);
 
-	/* Enable TIMER0 */
-	CLK_EnableModuleClock(TMR1_MODULE);
-	CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR0SEL_PCLK0, 0);
+	/* Enable TIMER2 */
+	CLK_EnableModuleClock(TMR2_MODULE);
+	CLK_SetModuleClock(TMR2_MODULE, CLK_CLKSEL1_TMR2SEL_PCLK1, 0);
 #endif
 
 	SystemCoreClockUpdate();
@@ -72,8 +72,8 @@ void clock_init(void)
 
 	SysTick_Config(CLK_GetCPUFreq() / CLOCK_SECOND);
 
-	TIMER_Open(TIMER1, TIMER_PERIODIC_MODE, 1000000);
-	NVIC_EnableIRQ(TMR1_IRQn);
+	TIMER_Open(TIMER2, TIMER_PERIODIC_MODE, 1000000);
+	NVIC_EnableIRQ(TMR2_IRQn);
 }
 
 clock_time_t clock_time(void)
@@ -98,8 +98,8 @@ static void start_timer(void)
 	mutex_counter++;
 	if (mutex_counter == 1) {
 		g_tmr_ticks = 0;
-		TIMER_EnableInt(TIMER1);
-		TIMER_Start(TIMER1);
+		TIMER_EnableInt(TIMER2);
+		TIMER_Start(TIMER2);
 	}
 	mutex_unlock(&g_mutex);
 }
@@ -109,8 +109,8 @@ static void end_timer(void)
 	mutex_try_lock(&g_mutex);
 	mutex_counter--;
 	if (mutex_counter == 0) {
-		TIMER_Stop(TIMER1);
-		TIMER_DisableInt(TIMER1);
+		TIMER_Stop(TIMER2);
+		TIMER_DisableInt(TIMER2);
 		g_tmr_ticks = 0;
 	}
 	mutex_unlock(&g_mutex);
@@ -137,8 +137,8 @@ void SysTick_Handler(void)
 		etimer_request_poll();
 }
 
-void TMR1_IRQHandler(void)
+void TMR2_IRQHandler(void)
 {
 	g_tmr_ticks++;
-	TIMER_ClearIntFlag(TIMER1);
+	TIMER_ClearIntFlag(TIMER2);
 }

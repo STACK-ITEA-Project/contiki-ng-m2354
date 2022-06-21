@@ -60,6 +60,10 @@
 #include "NuMicro.h"
 #endif
 
+#ifdef TRUSTZONE_NONSECURE 
+#include "secure_context.h"
+#endif
+
 /*---------------------------------------------------------------------------*/
 /* Log configuration */
 #include "sys/log.h"
@@ -110,6 +114,7 @@ void UART0_IRQHandler(void)
 
 static void uart0_init(void)
 {
+#ifndef TRUSTZONE_NONSECURE 
 	/* Enable UART0 module clock */
 	CLK_EnableModuleClock(UART0_MODULE);
 
@@ -119,6 +124,7 @@ static void uart0_init(void)
 	/* Set multi-function pins for UART0 RXD and TXD */
 	SYS->GPA_MFPL = (SYS->GPA_MFPL & (~(UART0_RXD_PA6_Msk | UART0_TXD_PA7_Msk)))
 		| UART0_RXD_PA6 | UART0_TXD_PA7;
+#endif
 	/* Configure UART0: 115200, 8-bit word, no parity bit, 1 stop bit. */
 	UART_Open(UART0, 115200);
 
@@ -150,10 +156,28 @@ void platform_init_stage_two(void)
 #endif
 }
 /*---------------------------------------------------------------------------*/
+void SVC_Handler(void)
+{
+#ifdef TRUSTZONE_NONSECURE 
+  SecureContextHandle_t handle;
+
+  SecureContext_Init();
+  handle = SecureContext_AllocateContext(4 * 1024);
+  SecureContext_LoadContext(handle);
+#endif
+}
+
+static void setup_secure_stack(void)
+{
+	__asm volatile ("svc 0");
+}
+
 void
 platform_init_stage_three(void)
 {
+	setup_secure_stack();
   //process_start(&sensors_process, NULL);
+
 }
 /*---------------------------------------------------------------------------*/
 void

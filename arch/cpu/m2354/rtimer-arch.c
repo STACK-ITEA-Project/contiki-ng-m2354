@@ -8,15 +8,17 @@ static volatile rtimer_clock_t g_time = 0;
 
 void rtimer_arch_init(void)
 {
-	CLK_EnableModuleClock(TMR0_MODULE);
-	CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_PCLK0, 0);
+#if !defined(TRUSTZONE_NONSECURE)
+	CLK_EnableModuleClock(TMR3_MODULE);
+	CLK_SetModuleClock(TMR3_MODULE, CLK_CLKSEL1_TMR3SEL_PCLK1, 0);
+#endif
 
-	TIMER_Open(TIMER0, TIMER_PERIODIC_MODE, RTIMER_ARCH_SECOND);
+	TIMER_Open(TIMER3, TIMER_PERIODIC_MODE, RTIMER_ARCH_SECOND);
 
-	TIMER_EnableInt(TIMER0);
-	NVIC_EnableIRQ(TMR0_IRQn);
+	TIMER_EnableInt(TIMER3);
+	NVIC_EnableIRQ(TMR3_IRQn);
 
-	TIMER_Start(TIMER0);
+	TIMER_Start(TIMER3);
 }
 
 void rtimer_arch_schedule(rtimer_clock_t t)
@@ -29,7 +31,7 @@ rtimer_clock_t rtimer_arch_now(void)
 	return g_ticks;
 }
 
-void TMR0_IRQHandler(void)
+void TMR3_IRQHandler(void)
 {
 	if (g_time && g_time <= g_ticks) {
 		g_time = 0;
@@ -37,6 +39,6 @@ void TMR0_IRQHandler(void)
 	}
 		
 	g_ticks++;
-	TIMER_ClearIntFlag(TIMER0);
+	TIMER_ClearIntFlag(TIMER3);
 }
 
