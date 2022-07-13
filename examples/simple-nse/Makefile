@@ -1,8 +1,5 @@
-CONTIKI_PROJECT = crypto_ex
+CONTIKI_PROJECT = simple-nse
 all: $(CONTIKI_PROJECT)
 
 CONTIKI = ../..
-
-PROJECT_SOURCEFILES += kat.c
-
 include $(CONTIKI)/Makefile.include

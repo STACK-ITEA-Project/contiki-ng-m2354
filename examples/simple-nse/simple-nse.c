@@ -32,25 +32,37 @@
 
 /**
  * \file
- *         A very simple Contiki application showing how Contiki programs look
+ *         A very simple Non-Secure Entry example
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         Ethan Park <yongkwan.park@securitplatform.co.kr>
  */
 
 #include "contiki.h"
 
+#include <stdio.h> /* For printf() */
+
+uint32_t CLK_GetCPUFreq(void);
+
 /*---------------------------------------------------------------------------*/
-PROCESS(crypto_process, "Crypto process");
-AUTOSTART_PROCESSES(&crypto_process);
+PROCESS(hello_world_process, "Hello world process");
+AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(crypto_process, ev, data)
+PROCESS_THREAD(hello_world_process, ev, data)
 {
-  extern int kat(void);
+  static struct etimer timer;
 
   PROCESS_BEGIN();
 
-  kat();
-  while (1);
+  /* Setup a periodic timer that expires after 10 seconds. */
+  etimer_set(&timer, CLOCK_SECOND * 10);
+
+  while(1) {
+    printf("CPU Frequency = %lu\n", CLK_GetCPUFreq());
+
+    /* Wait for the periodic timer to expire and then restart the timer. */
+    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+    etimer_reset(&timer);
+  }
 
   PROCESS_END();
 }
