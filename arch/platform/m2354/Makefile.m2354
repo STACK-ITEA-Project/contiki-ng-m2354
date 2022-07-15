@@ -4,7 +4,7 @@ endif
 
 ### Board and BSP selection
 BOARD ?= ASM2
-BOARDS = Numaker ASM2
+BOARDS = Numaker_PFM_M2354 ASM2
 
 ### Unless the example dictates otherwise, build with code size optimisations switched off
 SMALL ?= 0
