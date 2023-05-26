@@ -1,0 +1,24 @@
+
+#ifndef PROJECT_CONF_H_
+#define PROJECT_CONF_H_
+
+#if 0
+#define LOG_CONF_LEVEL_IPV6 LOG_LEVEL_DBG
+#define LOG_CONF_LEVEL_TCPIP LOG_LEVEL_DBG
+#endif
+
+#define DTLS_SERVER
+
+#ifdef DTLS_SERVER
+#define PLATFORM_CONF_MAC_ADDR {0x00,0x13,0xA2,0x00,0x42,0x1C,0x4A, 0xEA}
+#else
+#define PLATFORM_CONF_MAC_ADDR {0x00,0x13,0xA2,0x00,0x42,0x1C,0x4A, 0xF1}
+#endif
+
+#define UIP_CONF_UDP 1
+#define UIP_CONF_ROUTER 1
+#define UIP_CONF_BUFFER_SIZE	4096
+
+#define NETSTACK_CONF_NETWORK slipnet_driver
+#define NETSTACK_CONF_FRAMER no_framer
+#endif /* PROJECT_CONF_H_ */

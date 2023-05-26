@@ -88,7 +88,7 @@ unsigned long clock_seconds(void)
 
 void clock_wait(clock_time_t i)
 {
-	clock_time_t end = g_ticks + i;
+	clock_time_t end = g_ticks + i + 1;
 	while (g_ticks < end);
 }
 

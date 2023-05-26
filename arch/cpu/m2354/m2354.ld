@@ -6,7 +6,7 @@ _ld_flash_length = DEFINED(ld_flash_length) ? ld_flash_length : 0x00100000;
 _ld_ram_start    = DEFINED(ld_ram_start)    ? ld_ram_start    : 0x20000000;
 _ld_ram_length   = DEFINED(ld_ram_length)   ? ld_ram_length   : 0x00040000;
 
-_ld_stack_size   = DEFINED(ld_stack_size)   ? ld_stack_size   : 0x00000800;
+_ld_stack_size   = DEFINED(ld_stack_size)   ? ld_stack_size   : 0x00002000;
 
 MEMORY
 {
