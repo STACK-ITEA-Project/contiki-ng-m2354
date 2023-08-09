@@ -189,11 +189,19 @@ void GPF_IRQHandler(void)
 	uint32_t flag;
 
 	flag = PF->INTSRC;
+#if USE_PF8
+	/* Check if PF8 is asserted */
+	if (flag & (1 << 8)) {
+		xbee_connected = 1;
+		process_poll(&udp_client_process);
+	}
+#else
 	/* Check if PF9 is asserted */
 	if (flag & (1 << 9)) {
 		xbee_connected = 1;
 		process_poll(&udp_client_process);
 	}
+#endif
 
 	PF->INTSRC = flag;
 }
@@ -276,9 +284,15 @@ PROCESS_THREAD(udp_client_process, ev, data)
 	udp_socket_connect(&udp_sock, &dest_ipaddr, UDP_SERVER_PORT);
 	udp_socket_bind(&udp_sock, UDP_CLIENT_PORT);
 
-#if 0
-	printf("PF9_NS = %ld\n", PF9_NS);
-#endif
+#if USE_PF8
+	if (PF8_NS == 0) {
+		GPIO_EnableInt(PF, 8, GPIO_INT_RISING);
+		NVIC_EnableIRQ(GPF_IRQn);
+		NVIC_SetPriority(GPF_IRQn, 0);
+		PROCESS_YIELD_UNTIL(xbee_connected);
+		NVIC_DisableIRQ(GPF_IRQn);
+	}
+#else
 	if (PF9_NS == 0) {
 		GPIO_EnableInt(PF, 9, GPIO_INT_RISING);
 		NVIC_EnableIRQ(GPF_IRQn);
@@ -286,6 +300,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 		PROCESS_YIELD_UNTIL(xbee_connected);
 		NVIC_DisableIRQ(GPF_IRQn);
 	}
+#endif
 
     mbedtls_printf( " ok\n" );
 

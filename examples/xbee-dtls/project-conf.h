@@ -15,6 +15,8 @@
 #define PLATFORM_CONF_MAC_ADDR {0x00,0x13,0xA2,0x00,0x42,0x1C,0x4A, 0xF1}
 #endif
 
+#define USE_PF8	1
+
 #define UIP_CONF_UDP 1
 #define UIP_CONF_ROUTER 1
 #define UIP_CONF_BUFFER_SIZE	4096
