@@ -141,6 +141,32 @@ void UART0_IRQHandler(void)
 				UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk);
 }
 
+void UART1_IRQHandler(void)
+{
+	uint8_t c = 0xff;
+	uint32_t int_sts = UART1->INTSTS;
+
+	if (int_sts & UART_INTSTS_RDAINT_Msk) {
+		/* Get all the input characters */
+		while (UART_IS_RX_READY(UART1)) {
+			/* Get the character from UART Buffer */
+			c = (uint8_t)UART_READ(UART1);
+#if 1
+			printf("UART1 INT: %02x\n", c);
+#endif
+			//slip_input_byte(c);
+                        int meter_if_serial_input_byte(unsigned char c);
+                        meter_if_serial_input_byte(c);
+		}
+	}
+
+	/* Handle transmission error */
+	if (UART1->FIFOSTS & (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk |
+				UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk))
+		UART1->FIFOSTS = (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk |
+				UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk);
+}
+
 void UART4_IRQHandler(void)
 {
 	uint8_t c = 0xff;
@@ -185,6 +211,15 @@ static void uart0_init(void)
 	UART_EnableInt(UART0, UART_INTEN_RDAIEN_Msk);
 }
 
+static void uart1_init(void)
+{
+	/* Configure UART1: 115200, 8-bit word, no parity bit, 1 stop bit. */
+	UART_Open(UART1, 115200);
+
+	NVIC_EnableIRQ(UART1_IRQn);
+	UART_EnableInt(UART1, UART_INTEN_RDAIEN_Msk);
+}
+
 static void uart4_init(void)
 {
 #ifndef TRUSTZONE_NONSECURE 
@@ -208,6 +243,7 @@ static void uart4_init(void)
 void platform_init_stage_two(void)
 {
 	uart0_init();
+	uart1_init();
 	uart4_init();
 	serial_line_init();
     set_lladdr();
