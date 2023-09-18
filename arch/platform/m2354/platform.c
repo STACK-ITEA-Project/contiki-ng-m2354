@@ -151,8 +151,8 @@ void UART1_IRQHandler(void)
 		while (UART_IS_RX_READY(UART1)) {
 			/* Get the character from UART Buffer */
 			c = (uint8_t)UART_READ(UART1);
-#if 1
-			printf("UART1 INT: %02x\n", c);
+#if 0
+			printf("UART1 INT: %02x\r\n", c);
 #endif
 			//slip_input_byte(c);
                         int meter_if_serial_input_byte(unsigned char c);

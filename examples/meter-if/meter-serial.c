@@ -33,6 +33,7 @@
 #include "meterif_data.h"
 #include <string.h> /* for memcpy() */
 #include <stdio.h>  // native 
+#include "debug-uart.h"
 
 #include "lib/ringbuf.h"
 
@@ -57,7 +58,6 @@ meter_if_serial_input_byte(unsigned char c)
 {
   int ret = 1;
   
-  printf("%s: 0x%x\n", __func__, c);
     /* Add character */
   if(ringbuf_put(&rxbuf, c) == 0) {
       ret = 0;
@@ -82,12 +82,14 @@ PROCESS_THREAD(meter_if_serial_process, ev, data)
   while(1) {
     /* Fill application buffer until newline or empty */
     int c = ringbuf_get(&rxbuf);
-    static meterif_data_context_t ctx;
     
     if(c == -1) {
+      show_uart_debug_info();
       /* Buffer empty, wait for poll */
       PROCESS_YIELD();
     } else {
+        archive_uart_debug_info(c);
+        static meterif_data_context_t ctx;
         if (meterif_data_beginning(c)) {
             meterif_data_init(&ctx);
         }
@@ -95,7 +97,6 @@ PROCESS_THREAD(meter_if_serial_process, ev, data)
         if (meterif_data_complete(&ctx)) {
             meterif_data_process(&ctx);
         }
-
     }
   }
 

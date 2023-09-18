@@ -75,6 +75,10 @@ int meterif_data_state_data_input(meterif_data_context_t *ctx, uint8_t c)
 {
     int r = 0;
     meterif_data_state_t *pstate = ctx->state;
+    if (pstate->count >= METERIF_SZ_DATABUF) {
+        pstate->fsm = FSM_MAX;
+        return -1;
+    }
     ctx->data[pstate->count] = c;
     pstate->count++;
     if (pstate->count == ctx->len) {
@@ -89,14 +93,25 @@ int meterif_data_state_data_input(meterif_data_context_t *ctx, uint8_t c)
     return r;
 }
 
+int meterif_data_is_initialized(meterif_data_context_t *ctx)
+{
+    if (NULL == ctx) {
+        return 0;
+    }
+
+    if (NULL == ctx->state) {
+        return 0;
+    }
+    return 1;
+}
+
 int meterif_data_accumulate(meterif_data_context_t *ctx, uint8_t c)
 {
     int r = 0;
     meterif_data_state_t *pstate;
-    if (NULL == ctx) {
+    if (!meterif_data_is_initialized(ctx)) {
         return -1;
     }
-
     pstate = ctx->state;
     if (pstate->fsm == FSM_INIT) {
         r = meterif_data_state_init_input(ctx, c);

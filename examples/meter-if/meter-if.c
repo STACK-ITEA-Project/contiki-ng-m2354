@@ -68,7 +68,7 @@ PROCESS_THREAD(hello_world_process, ev, data)
 
   while(1) {
 #ifdef CONTIKI_TARGET_M2354
-    //printf("CPU Frequency = %"PRIu32"\n", CLK_GetCPUFreq());
+    printf("CPU Frequency = %"PRIu32"\n", CLK_GetCPUFreq());
 #endif
 
     /* Wait for the periodic timer to expire and then restart the timer. */
