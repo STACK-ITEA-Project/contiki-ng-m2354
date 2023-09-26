@@ -83,12 +83,7 @@ PROCESS_THREAD(meter_if_serial_process, ev, data)
     /* Fill application buffer until newline or empty */
     int c = ringbuf_get(&rxbuf);
     
-    if(c == -1) {
-      show_uart_debug_info();
-      /* Buffer empty, wait for poll */
-      PROCESS_YIELD();
-    } else {
-        archive_uart_debug_info(c);
+    if(c != -1) {
         static meterif_data_context_t ctx;
         if (meterif_data_beginning(c)) {
             meterif_data_init(&ctx);
@@ -98,6 +93,7 @@ PROCESS_THREAD(meter_if_serial_process, ev, data)
             meterif_data_process(&ctx);
         }
     }
+    PROCESS_YIELD();
   }
 
   PROCESS_END();

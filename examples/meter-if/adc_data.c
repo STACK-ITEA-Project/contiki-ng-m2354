@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <inttypes.h>
 #include "adc_data.h"
 
@@ -226,11 +227,36 @@ int adc_pushdata_read(adc_pushdata_t *pdata, uint8_t *bin, size_t sz)
     return (int)(ptr - bin);
 }
 
+static char * _float_to_char(float x, char *p, size_t l)
+{
+    int pos = 0;
+    int decimal;
+    if (x < 0) {
+        p[pos] = '-';
+        pos++;
+    }
+    decimal = (int)x;
+    pos += sprintf(&p[pos], "%d.", decimal);
+    x -= decimal;
+    while (x > 0 && pos < l) {
+        x *= 10;
+        decimal = (int)x;
+        pos += sprintf(&p[pos], "%d", decimal);
+    }
+    return p;
+}
+
 int adc_pushdata_process(uint8_t *data, size_t sz)
 {
     adc_pushdata_t pdata = {0,};
     adc_pushdata_read(&pdata, data, sz);
+    char pbuf[16] = {0,};
 
     printf("0x%"PRIx32" 0x%"PRIx32"\n", pdata.r.voltage.u32, pdata.r.vol_thd.u32);
+    _float_to_char(pdata.r.voltage.f, pbuf, 10);
+    printf("%s\n", pbuf);
+    _float_to_char(pdata.r.vol_thd.f, pbuf, 10);
+    printf("%s\n", pbuf);
+
     return 0;
 }
