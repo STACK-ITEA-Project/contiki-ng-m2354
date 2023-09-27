@@ -231,6 +231,7 @@ static char * _float_to_char(float x, char *p, size_t l)
 {
     int pos = 0;
     int decimal;
+    size_t len = l - 1; // regarding '\0'
     if (x < 0) {
         p[pos] = '-';
         pos++;
@@ -238,9 +239,10 @@ static char * _float_to_char(float x, char *p, size_t l)
     decimal = (int)x;
     pos += sprintf(&p[pos], "%d.", decimal);
     x -= decimal;
-    while (x > 0 && pos < l) {
+    while (x > 0 && pos < len) {
         x *= 10;
         decimal = (int)x;
+        x -= decimal;
         pos += sprintf(&p[pos], "%d", decimal);
     }
     return p;

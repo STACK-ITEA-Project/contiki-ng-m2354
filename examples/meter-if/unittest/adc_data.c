@@ -120,10 +120,32 @@ void test_adc_pushdata_read(void)
 
 }
 
+void test_float_to_string(void)
+{
+    float f = 1.1;
+    char buf[256];
+    char *p;
+    p = _float_to_char(f, buf, 4);
+    assert_true(p == buf);
+    assert_equal_string(buf, "1.1");
+
+    f = 1.234567;
+    p = _float_to_char(f, buf, 9);
+    assert_true(p == buf);
+    assert_equal_string(buf, "1.234567");
+
+    f = 220.123;
+    p = _float_to_char(f, buf, 8);
+    assert_true(p == buf);
+    assert_equal_string(buf, "220.123");
+
+}
+
 void main(void)
 {
     _setup();
     run_test(test_adc_pushdata_read_uint8);
     run_test(test_adc_pushdata_read_float);
     run_test(test_adc_pushdata_read);
+    run_test(test_float_to_string);
 }
