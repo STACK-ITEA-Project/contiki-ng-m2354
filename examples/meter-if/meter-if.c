@@ -52,6 +52,7 @@ AUTOSTART_PROCESSES(&hello_world_process);
 void meter_dev_init(void);
 #endif
 void meter_if_serial_init(void);
+void meter_relay_example(void);
 
 PROCESS_THREAD(hello_world_process, ev, data)
 {
@@ -65,6 +66,8 @@ PROCESS_THREAD(hello_world_process, ev, data)
 
   /* Setup a periodic timer that expires after 10 seconds. */
   etimer_set(&timer, CLOCK_SECOND * 10);
+
+  meter_relay_example();
 
   while(1) {
 #ifdef CONTIKI_TARGET_M2354

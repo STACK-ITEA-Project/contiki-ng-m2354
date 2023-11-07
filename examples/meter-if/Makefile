@@ -6,6 +6,7 @@ PROJECT_SOURCEFILES += meter-serial.c
 PROJECT_SOURCEFILES += meterif_data.c
 PROJECT_SOURCEFILES += adc_data.c
 PROJECT_SOURCEFILES += debug-uart.c
+PROJECT_SOURCEFILES += relay_example.c
 
 CONTIKI = ../..
 include $(CONTIKI)/Makefile.include
