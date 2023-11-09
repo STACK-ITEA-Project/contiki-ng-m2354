@@ -141,6 +141,12 @@ void UART0_IRQHandler(void)
 				UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk);
 }
 
+__attribute__((weak)) int meter_if_serial_input_byte(unsigned char c)
+{
+    (void)c;
+    return 0;
+}
+
 void UART1_IRQHandler(void)
 {
 	uint8_t c = 0xff;
@@ -155,7 +161,6 @@ void UART1_IRQHandler(void)
 			printf("UART1 INT: %02x\r\n", c);
 #endif
 			//slip_input_byte(c);
-                        int meter_if_serial_input_byte(unsigned char c);
                         meter_if_serial_input_byte(c);
 		}
 	}
