@@ -1062,7 +1062,7 @@ extern void SystemInit(void);
 #include "bpwm.h"
 #include "epwm.h"
 #include "qspi.h"
-#include "spi.h"
+#include "nu_spi.h"
 #include "timer.h"
 #include "timer_pwm.h"
 #include "wdt.h"
