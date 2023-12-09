@@ -14,5 +14,7 @@
 /*---------------------------------------------------------------------------*/
 /* Include CPU-related configuration */
 #include "m2354-conf.h"
+
+#include "board.h"
 #endif  // end of CONTIKI_CONF_H
 
