@@ -289,6 +289,9 @@ power_standby(const spi_device_t *flash_spi_configuration)
 
   success = (spi_write(flash_spi_configuration, &cmd, sizeof(cmd)) == SPI_DEV_STATUS_OK);
 
+  // The RPD is completed by driving CS# High.
+  deselect(flash_spi_configuration);
+
   if(success) {
     success = wait_ready(flash_spi_configuration) == true ? true : false;
   }
